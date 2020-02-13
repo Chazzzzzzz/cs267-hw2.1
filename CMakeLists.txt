@@ -28,10 +28,12 @@ if (NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
 endif ()
 
 add_executable(serial main.cpp serial.cpp common.h)
+add_executable(bin main.cpp bin.cpp common.h)
 
 add_executable(openmp main.cpp openmp.cpp common.h)
 target_link_libraries(openmp PRIVATE OpenMP::OpenMP_CXX)
 
 # Copy the job scripts
 configure_file(job-serial job-serial COPYONLY)
+configure_file(job-bin job-bin COPYONLY)
 configure_file(job-openmp job-openmp COPYONLY)
