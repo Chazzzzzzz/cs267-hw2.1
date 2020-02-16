@@ -1,25 +1,9 @@
 #include "common.h"
 #include <cmath>
+#include "mesh.h"
+using namespace std;
 
-// Apply the force from neighbor to particle
-void apply_force(particle_t& particle, particle_t& neighbor) {
-    // Calculate Distance
-    double dx = neighbor.x - particle.x;
-    double dy = neighbor.y - particle.y;
-    double r2 = dx * dx + dy * dy;
-
-    // Check if the two particles should interact
-    if (r2 > cutoff * cutoff)
-        return;
-
-    r2 = fmax(r2, min_r * min_r);
-    double r = sqrt(r2);
-
-    // Very simple short-range repulsive force
-    double coef = (1 - cutoff / r) / r2 / mass;
-    particle.ax += coef * dx;
-    particle.ay += coef * dy;
-}
+Mesh mesh;
 
 // Integrate the ODE
 void move(particle_t& p, double size) {
@@ -47,19 +31,20 @@ void init_simulation(particle_t* parts, int num_parts, double size) {
 	// You can use this space to initialize static, global data objects
     // that you may need. This function will be called once before the
     // algorithm begins. Do not do any particle simulation here
+    int row, column;
+    row = column = ceil(size/(2 * cutoff));
+    mesh.initialize(row, column, size/row);
+    mesh.generate_mesh(parts, num_parts);
 }
 
 void simulate_one_step(particle_t* parts, int num_parts, double size) {
     // Compute Forces
-    for (int i = 0; i < num_parts; ++i) {
-        parts[i].ax = parts[i].ay = 0;
-        for (int j = 0; j < num_parts; ++j) {
-            apply_force(parts[i], parts[j]);
-        }
-    }
+    mesh.apply_force_mesh();
 
     // Move Particles
     for (int i = 0; i < num_parts; ++i) {
         move(parts[i], size);
     }
+
+    mesh.generate_mesh(parts, num_parts);
 }
