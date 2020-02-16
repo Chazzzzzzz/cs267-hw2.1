@@ -15,10 +15,10 @@ public:
     vector<particle_t*>* cells;
     void initialize(int row, int column, double cell_size);
     void generate_mesh(particle_t* parts, int num_parts);
-    bool Insert(particle_t * p, int r, int c) {
+    void Insert(particle_t * p, int r, int c) {
         cells[r * nRow + c].push_back(p);
     }
-    bool Clear() {
+    void Clear() {
         for (int i = 0; i < nRow; i++) {
             for (int j = 0; j < nColumn; j++) {
                 cells[i * nRow + j].clear();
