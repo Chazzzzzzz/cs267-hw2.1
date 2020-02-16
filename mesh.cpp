@@ -31,7 +31,7 @@ void Mesh::initialize(int row, int column, double cell_size) {
     cells = new vector<particle_t*>[row * column];
 }
 
-int Mesh::get_cellRow(particle_t p) {
+inline int Mesh::get_cellRow(particle_t p) {
     int x;
     x = floor(p.x / cellSize);
     if (x == nRow) {
@@ -40,7 +40,7 @@ int Mesh::get_cellRow(particle_t p) {
     return x;
 }
 
-int Mesh::get_cellColumn(particle_t p){
+inline int Mesh::get_cellColumn(particle_t p){
     int y;
     y = floor(p.y / cellSize);
     if (y == nColumn) {
@@ -49,7 +49,7 @@ int Mesh::get_cellColumn(particle_t p){
     return y;
 }
 
-void Mesh::generate_mesh(particle_t *parts, int num_parts) {
+inline void Mesh::generate_mesh(particle_t *parts, int num_parts) {
     for(int i = 0; i< num_parts; i++) {
         int x = get_cellRow(parts[i]);
         int y = get_cellColumn(parts[i]);
@@ -57,7 +57,7 @@ void Mesh::generate_mesh(particle_t *parts, int num_parts) {
     }
 }
 
-void Mesh::apply_force_single_cell(particle_t* particle, int r, int c) {
+inline void Mesh::apply_force_single_cell(particle_t* particle, int r, int c) {
     // check legal coordinate
     if (r < 0 or r >= nRow or c < 0 or c >= nColumn) {
         return;
@@ -90,7 +90,7 @@ void Mesh::apply_force_neighbor_cell(int r, int c) {
     }
 }
 
-void Mesh::apply_force_mesh() {
+inline void Mesh::apply_force_mesh() {
     for (int i = 0; i < nRow; i++) {
         for (int j = 0; j < nColumn; j++) {
             apply_force_neighbor_cell(i, j);
