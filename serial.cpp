@@ -45,6 +45,6 @@ void simulate_one_step(particle_t* parts, int num_parts, double size) {
     for (int i = 0; i < num_parts; ++i) {
         move(parts[i], size);
     }
-
+    mesh.Clear();
     mesh.generate_mesh(parts, num_parts);
 }

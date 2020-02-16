@@ -17,7 +17,6 @@ public:
     void generate_mesh(particle_t* parts, int num_parts);
     bool Insert(particle_t * p, int r, int c) {
         cells[r * nRow + c].push_back(p);
-
     }
     bool Clear() {
         for (int i = 0; i < nRow; i++) {

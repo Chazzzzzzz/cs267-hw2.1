@@ -50,7 +50,6 @@ int Mesh::get_cellColumn(particle_t p){
 }
 
 void Mesh::generate_mesh(particle_t *parts, int num_parts) {
-    this->Clear();
     for(int i = 0; i< num_parts; i++) {
         int x = get_cellRow(parts[i]);
         int y = get_cellColumn(parts[i]);
