@@ -73,20 +73,20 @@ void Mesh::apply_force_neighbor_cell(int r, int c) {
     for (std::vector<particle_t*>::iterator it = particles.begin() ; it != particles.end(); ++it) {
         // up
         apply_force_single_cell(*it, r-1, c);
-        // down
-        apply_force_single_cell(*it, r+1, c);
-        // left
-        apply_force_single_cell(*it, r, c-1);
-        // right
-        apply_force_single_cell(*it, r, c+1);
-        // up left
-        apply_force_single_cell(*it, r-1, c-1);
         // up right
         apply_force_single_cell(*it, r-1, c+1);
-        // down left
-        apply_force_single_cell(*it, r+1, c-1);
+        // right
+        apply_force_single_cell(*it, r, c+1);
         // down right
         apply_force_single_cell(*it, r+1, c+1);
+        // down
+        apply_force_single_cell(*it, r+1, c);
+        // down left
+        apply_force_single_cell(*it, r+1, c-1);
+        // left
+        apply_force_single_cell(*it, r, c-1);
+        // up left
+        apply_force_single_cell(*it, r-1, c-1);
     }
 }
 
