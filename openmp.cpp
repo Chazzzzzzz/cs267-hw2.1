@@ -1,5 +1,5 @@
 #include "common.h"
-//#include <omp.h>
+#include <omp.h>
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -51,6 +51,7 @@ typedef std::vector<particle_t*> bin_t;
 
 double size;
 bin_t* bins;
+omp_lock_t* locks;
 int bin_row_count;
 int bin_count;
 double bin_size;
@@ -84,10 +85,12 @@ void rebin(particle_t* parts, int num_parts) {
     for (int i = 0; i < bin_count; i++) {
         bins[i].clear();
     }
-    #pragma omp single
+    #pragma omp for
     for (int i = 0; i < num_parts; i++) {
         int bin_id = get_bin_id(parts[i]);
+        omp_set_lock(&locks[bin_id]);
         bins[bin_id].push_back(&parts[i]);
+        omp_unset_lock(&locks[bin_id]);
     }
 }
 
@@ -102,8 +105,14 @@ void init_simulation(particle_t* parts, int num_parts, double size_) {
     bin_row_count = size / cutoff;
     bin_count = bin_row_count * bin_row_count;
     bin_size = size / bin_row_count;
-    bins = new bin_t[bin_row_count * bin_row_count];
+    bins = new bin_t[bin_count];
+    locks = new omp_lock_t[bin_count];
     }
+#pragma omp for
+    for (int i = 0; i < bin_count; i++) {
+        omp_init_lock(&locks[i]);
+    }
+#pragma omp parallel
     rebin(parts, num_parts);
 }
 
