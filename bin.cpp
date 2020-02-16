@@ -63,10 +63,10 @@ double bin_size;
    v
 */
 
-int get_bin_id(particle_t& particle) {
+int inline get_bin_id(particle_t& particle) {
     int x, y;
-    y = (int) (particle.y / bin_size);
-    x = (int) (particle.x / bin_size);
+    y = particle.y / bin_size;
+    x = particle.x / bin_size;
     if (x == bin_row_count) {
         x--;
     }
@@ -100,10 +100,22 @@ void init_simulation(particle_t* parts, int num_parts, double size_) {
 }
 
 void inline loop(particle_t* parts, int i, int another_bin_id) {
-    for (auto neighbor = bins[another_bin_id].begin();
-            neighbor != bins[another_bin_id].end(); neighbor++) {
-        apply_force(parts[i], **neighbor);
+    for (particle_t* neighbor : bins[another_bin_id]) {
+        apply_force(parts[i], *neighbor);
     }
+}
+
+bool inline has_up(int bin_id) {
+    return bin_id - bin_row_count > -1;
+}
+bool inline has_down(int bin_id) {
+    return bin_id + bin_row_count < bin_count;
+}
+bool inline has_left(int bin_id) {
+    return bin_id % bin_row_count != 0;
+}
+bool inline has_right(int bin_id) {
+    return bin_id % bin_row_count != bin_row_count - 1;
 }
 
 void simulate_one_step(particle_t* parts, int num_parts, double size) {
@@ -114,35 +126,35 @@ void simulate_one_step(particle_t* parts, int num_parts, double size) {
         // self
         loop(parts, i, bin_id);
         // up
-        if (bin_id - bin_row_count > -1) {
+        if (has_up(bin_id)) {
             loop(parts, i, bin_id - bin_row_count);
         }
         // up right
-        if (bin_id - bin_row_count > -1 && bin_id % bin_row_count != bin_row_count - 1) {
+        if (has_up(bin_id) && has_right(bin_id)) {
             loop(parts, i, bin_id - bin_row_count + 1);
         }
         // right
-        if (bin_id % bin_row_count != bin_row_count - 1) {
+        if (has_right(bin_id)) {
             loop(parts, i, bin_id + 1);
         }
         // down right
-        if (bin_id + bin_row_count < bin_count && bin_id % bin_row_count != bin_row_count - 1) {
+        if (has_down(bin_id) && has_right(bin_id)) {
             loop(parts, i, bin_id + bin_row_count + 1);
         }
         // down
-        if (bin_id + bin_row_count < bin_count) {
+        if (has_down(bin_id)) {
             loop(parts, i, bin_id + bin_row_count);
         }
         // down left
-        if (bin_id + bin_row_count < bin_count && bin_id % bin_row_count != 0) {
+        if (has_down(bin_id) && has_left(bin_id)) {
             loop(parts, i, bin_id + bin_row_count - 1);
         }
         // left
-        if (bin_id % bin_row_count != 0) {
+        if (has_left(bin_id)) {
             loop(parts, i, bin_id - 1);
         }
         // up left
-        if (bin_id - bin_row_count > -1 && bin_id % bin_row_count != 0) {
+        if (has_up(bin_id) && has_left(bin_id)) {
             loop(parts, i, bin_id - bin_row_count - 1);
         }
     }
